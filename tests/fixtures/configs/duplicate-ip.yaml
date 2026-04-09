@@ -1,0 +1,44 @@
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: enp1s0f0
+      serial_number: CAM-001
+      genicam_filename: camera-a.xml
+      gvsp_lost_ratio: 0.0
+    - ip_address: 192.168.10.11
+      interface_name: enp1s0f1
+      serial_number: CAM-002
+      genicam_filename: camera-b.xml
+      gvsp_lost_ratio: 0.0
+dut:
+  ifaces: [eno1, eno2]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+stream:
+  packet_resend: true
+  socket_buffer: true
+  socket_buffer_size: 1048576
+  frame_retention: 200000
+  initial_packet_timeout: 1000
+  packet_timeout: 2000
+  packet_request_ratio: 0.25
+  receiver_priority: 0
+scenarios:
+  - name: smoke
+    duration: 60
+    warmup: 5
+    cooldown: 5
+pktgen:
+  interfaces: [eno1, eno2]
+  duration: 300
+  packet_size: 1500
+  rate_mbps: 1000
+output:
+  root: artifacts/run-duplicate
+  raw_dir: artifacts/run-duplicate/raw
+  reports_dir: artifacts/run-duplicate/reports
+  logs_dir: artifacts/run-duplicate/logs
+  evidence_dir: artifacts/run-duplicate/evidence

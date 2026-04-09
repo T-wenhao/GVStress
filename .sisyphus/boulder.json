@@ -1,0 +1,86 @@
+{
+  "active_plan": "/mnt/d/workspace/GVStress/.sisyphus/plans/gvstress-v1-remediation.md",
+  "started_at": "2026-04-08T15:42:53.059Z",
+  "session_ids": [
+    "ses_293c3235affe6S1O1CAij30Ssz",
+    "ses_292381851ffeJaPx5hlq2zbxct",
+    "ses_29238170affewWChGs7SX35cZ3",
+    "ses_292381704ffe9pICdN9Y97ETaY",
+    "ses_29223b8caffe9KEH3Yz4TnzfJk",
+    "ses_29223b8c4ffexh9w97XPEgmz02",
+    "ses_291f6d7aeffe6cZgzvuV0Kzq2z",
+    "ses_291f6d7a3ffeGomlgbCvqM7siZ",
+    "ses_291f6d799ffeoJiwN0aLXxUZ04",
+    "ses_291f6d792ffedF4PhEK6PpB1ok"
+  ],
+  "session_origins": {
+    "ses_293c3235affe6S1O1CAij30Ssz": "direct",
+    "ses_292381851ffeJaPx5hlq2zbxct": "appended",
+    "ses_29238170affewWChGs7SX35cZ3": "appended",
+    "ses_292381704ffe9pICdN9Y97ETaY": "appended",
+    "ses_29223b8caffe9KEH3Yz4TnzfJk": "appended",
+    "ses_29223b8c4ffexh9w97XPEgmz02": "appended",
+    "ses_291f6d7aeffe6cZgzvuV0Kzq2z": "appended",
+    "ses_291f6d7a3ffeGomlgbCvqM7siZ": "appended",
+    "ses_291f6d799ffeoJiwN0aLXxUZ04": "appended",
+    "ses_291f6d792ffedF4PhEK6PpB1ok": "appended"
+  },
+  "plan_name": "gvstress-v1-remediation",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Restore public CLI/help contract",
+      "session_id": "ses_292381704ffe9pICdN9Y97ETaY",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-08T15:55:24.195Z"
+    },
+    "todo:4": {
+      "task_key": "todo:4",
+      "task_label": "4",
+      "task_title": "Wire DUT probes through scenario execution",
+      "session_id": "ses_2922de14dffefn4pAPjNKCTqfY",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-08T16:06:25.236Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "Make missing runtime tools produce structured invalid-prereq behavior",
+      "session_id": "ses_29223b8c4ffexh9w97XPEgmz02",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-08T16:22:50.448Z"
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "Replace hardcoded verdict assignment with verdict engine integration",
+      "session_id": "ses_292159473ffeUiykQRfPA5V5ga",
+      "agent": "Sisyphus-Junior",
+      "category": "ultrabrain",
+      "updated_at": "2026-04-08T16:43:40.101Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "Restore repo quality gates and final contract truthfulness",
+      "session_id": "ses_292044e8fffeJc7IEQNJUzxi1r",
+      "agent": "Sisyphus-Junior",
+      "category": "writing",
+      "updated_at": "2026-04-08T16:56:54.416Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "Remediation Plan Compliance Audit — oracle",
+      "session_id": "ses_291f6d792ffedF4PhEK6PpB1ok",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-08T17:09:22.325Z"
+    }
+  }
+}

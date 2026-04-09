@@ -1,0 +1,54 @@
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: eno1
+      serial_number: GV-001
+      genicam_filename: camera-a.xml
+      gvsp_lost_ratio: 0.0
+    - ip_address: 192.168.10.12
+      interface_name: eno2
+      serial_number: GV-002
+      genicam_filename: camera-b.xml
+      gvsp_lost_ratio: 0.0
+    - ip_address: 192.168.10.13
+      interface_name: eno3
+      serial_number: GV-003
+      genicam_filename: camera-c.xml
+      gvsp_lost_ratio: 0.0
+    - ip_address: 192.168.10.14
+      interface_name: eno4
+      serial_number: GV-004
+      genicam_filename: camera-d.xml
+      gvsp_lost_ratio: 0.0
+dut:
+  ifaces: [eno1, eno2, eno3, eno4]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+stream:
+  packet_resend: true
+  socket_buffer: true
+  socket_buffer_size: 1048576
+  frame_retention: 200000
+  initial_packet_timeout: 1000
+  packet_timeout: 2000
+  packet_request_ratio: 0.25
+  receiver_priority: 0
+scenarios:
+  - name: smoke
+    duration: 60
+    warmup: 10
+    cooldown: 5
+pktgen:
+  interfaces: [eno1, eno2, eno3, eno4]
+  duration: 300
+  packet_size: 1500
+  rate_mbps: 1000
+output:
+  root: artifacts/fakecam-up
+  raw_dir: artifacts/fakecam-up/raw
+  reports_dir: artifacts/fakecam-up/reports
+  logs_dir: artifacts/fakecam-up/logs
+  evidence_dir: artifacts/fakecam-up/evidence

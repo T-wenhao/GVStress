@@ -1,0 +1,39 @@
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: enp1s0f0
+      serial_number: CAM-001
+      genicam_filename: camera-a.xml
+      gvsp_lost_ratio: 1.5
+dut:
+  ifaces: [eno1]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+stream:
+  packet_resend: true
+  socket_buffer: true
+  socket_buffer_size: 1048576
+  frame_retention: 200000
+  initial_packet_timeout: 1000
+  packet_timeout: 2000
+  packet_request_ratio: 0.25
+  receiver_priority: 0
+scenarios:
+  - name: loss_injection
+    duration: 300
+    warmup: 15
+    cooldown: 15
+pktgen:
+  interfaces: [eno1]
+  duration: 300
+  packet_size: 1500
+  rate_mbps: 1000
+output:
+  root: artifacts/run-invalid-loss
+  raw_dir: artifacts/run-invalid-loss/raw
+  reports_dir: artifacts/run-invalid-loss/reports
+  logs_dir: artifacts/run-invalid-loss/logs
+  evidence_dir: artifacts/run-invalid-loss/evidence

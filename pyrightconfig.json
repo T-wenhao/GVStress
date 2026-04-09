@@ -1,0 +1,10 @@
+{
+  "include": [
+    "src",
+    "tests"
+  ],
+  "extraPaths": [
+    "src",
+    "/mnt/d/workspace/GVStress/src"
+  ]
+}
