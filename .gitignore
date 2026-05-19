@@ -19,6 +19,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+src/gvstress.egg-info/
 
 # Virtual environments
 .venv/
@@ -33,6 +34,10 @@ htmlcov/
 .pytest_cache/
 .tox/
 .nox/
+
+# Type checking and linting caches
+.mypy_cache/
+.ruff_cache/
 
 # IDE
 .vscode/
