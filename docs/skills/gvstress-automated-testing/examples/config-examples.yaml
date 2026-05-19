@@ -1,0 +1,169 @@
+# GVStress 配置文件示例
+
+## 示例 1: 单相机冒烟测试
+
+```yaml
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: eno1
+      serial_number: GV-001
+      genicam_filename: camera-a.xml
+
+dut:
+  ifaces: [eno1]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+
+stream:
+  packet_resend: true
+  socket_buffer: true
+  socket_buffer_size: 1048576
+  frame_retention: 200000
+
+scenarios:
+  - name: smoke
+    duration: 60
+    warmup: 10
+    cooldown: 5
+
+output:
+  root: artifacts/smoke
+  raw_dir: artifacts/smoke/raw
+  reports_dir: artifacts/smoke/reports
+  logs_dir: artifacts/smoke/logs
+  evidence_dir: artifacts/smoke/evidence
+```
+
+## 示例 2: 四相机压力测试
+
+```yaml
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: eno1
+      serial_number: GV-001
+      genicam_filename: camera-a.xml
+    - ip_address: 192.168.10.12
+      interface_name: eno2
+      serial_number: GV-002
+      genicam_filename: camera-b.xml
+    - ip_address: 192.168.10.13
+      interface_name: eno3
+      serial_number: GV-003
+      genicam_filename: camera-c.xml
+    - ip_address: 192.168.10.14
+      interface_name: eno4
+      serial_number: GV-004
+      genicam_filename: camera-d.xml
+
+dut:
+  ifaces: [eno1, eno2, eno3, eno4]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+
+scenarios:
+  - name: four_stream
+    duration: 300
+    warmup: 10
+    cooldown: 5
+
+output:
+  root: artifacts/four-stream
+```
+
+## 示例 3: 远程 DUT 配置
+
+```yaml
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: eno1
+      serial_number: GV-001
+      genicam_filename: camera-a.xml
+
+dut:
+  host: dut-lab-01
+  user: admin
+  ifaces: [eno1, eno2]
+  sample_interval_ms: 1000
+  collect:
+    nic: true
+    stream: true
+    system: true
+
+stream:
+  packet_resend: true
+  socket_buffer: true
+
+scenarios:
+  - name: smoke
+    duration: 60
+
+output:
+  root: artifacts/remote-test
+```
+
+## 示例 4: 长时间稳定性测试
+
+```yaml
+generator:
+  cameras:
+    - ip_address: 192.168.10.11
+      interface_name: eno1
+      serial_number: GV-001
+      genicam_filename: camera-a.xml
+
+dut:
+  ifaces: [eno1]
+  sample_interval_ms: 2000
+  collect:
+    nic: true
+    stream: true
+    system: true
+
+stream:
+  packet_resend: true
+  socket_buffer: true
+
+scenarios:
+  - name: soak
+    duration: 1800
+    warmup: 10
+    cooldown: 5
+
+output:
+  root: artifacts/soak
+```
+
+## 配置字段说明
+
+### generator.cameras
+- `ip_address`: 相机 IP 地址（必须与 DUT 网口在同一子网）
+- `interface_name`: 本地网络接口名称
+- `serial_number`: 相机序列号（自定义标识）
+- `genicam_filename`: GenICam 描述文件
+
+### dut
+- `host`: DUT 主机名或 IP（本地测试可省略）
+- `user`: SSH 用户（远程 DUT 需要）
+- `ifaces`: DUT 网络接口列表
+- `sample_interval_ms`: 采样间隔（毫秒）
+- `collect`: 选择采集的数据类型
+
+### stream
+- `packet_resend`: 启用包重传
+- `socket_buffer`: 启用 socket 缓冲
+- `socket_buffer_size`: 缓冲区大小（字节）
+
+### scenarios
+- `name`: 场景名称（smoke/four_stream/soak/loss_injection）
+- `duration`: 持续时间（秒）
+- `warmup`: 预热时间（秒）
+- `cooldown`: 冷却时间（秒）
