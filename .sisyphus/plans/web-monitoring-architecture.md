@@ -165,7 +165,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(domain): add node topology models` | Files: `src/gvstress/**`, `tests/unit/**`
 
-- [ ] 2. Create `gvstress-node` service skeleton
+- [x] 2. Create `gvstress-node` service skeleton
 
   **What to do**: Add a node-side service entrypoint with health, capabilities, current status, and safe command hooks. Expose it as a CLI subcommand or script entrypoint. The service must read config from file/env and support native deployment.
   **Must NOT do**: Do not expose raw shell command execution over HTTP.
