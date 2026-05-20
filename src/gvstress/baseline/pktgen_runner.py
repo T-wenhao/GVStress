@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from gvstress.config.models import PktgenConfig
+from gvstress.config.models import PktgenConfig, PktgenInterfaceConfig
 
 
 @dataclass(slots=True, frozen=True)
@@ -92,15 +92,24 @@ class PktgenRunner:
         }
         device_scripts: dict[str, str] = {}
         for assignment in assignments:
-            commands = [
-                "count 0",
-                f"pkt_size {self._config.packet_size}",
-                f"xmit_mode {self._config.xmit_mode}",
-            ]
+            net_cfg = self._resolve_network_config(assignment.interface)
+            count = 0 if net_cfg is None else net_cfg.count
+            commands = [f"count {count}"]
+            commands.append(f"pkt_size {self._config.packet_size}")
+            commands.append(f"xmit_mode {self._config.xmit_mode}")
             if rate is not None:
                 commands.append(f"rate {rate}")
             if self._config.ratep is not None:
                 commands.append(f"ratep {self._config.ratep}")
+            if net_cfg is not None:
+                if net_cfg.dst_ip is not None:
+                    commands.append("flag IPDST_RND 0")
+                    commands.append(f"dst {net_cfg.dst_ip}")
+                if net_cfg.udp:
+                    commands.append("flag UDPSRC_RND 0")
+                    commands.append("udp_dst_min 9")
+                    commands.append("udp_dst_max 9")
+
             device_scripts[assignment.device_name] = "\n".join(commands) + "\n"
         return PktgenControlScripts(
             thread_scripts=thread_scripts,
@@ -108,6 +117,18 @@ class PktgenRunner:
             start_script="start\n",
             stop_script="stop\n",
         )
+
+    def _resolve_network_config(
+        self, interface_name: str
+    ) -> PktgenInterfaceConfig | None:
+        if self._config.network is None:
+            return None
+        match = [
+            cfg for cfg in self._config.network if cfg.name == interface_name
+        ]
+        if len(match) == 1:
+            return match[0]
+        return None
 
     def materialize_control_scripts(
         self,
@@ -141,19 +162,21 @@ class PktgenRunner:
         assignments = self.build_assignments()
         scripts = self.build_control_scripts()
         for assignment in assignments:
-            (self._proc_root / assignment.thread_name).write_text(
-                scripts.thread_scripts[assignment.thread_name], encoding="utf-8"
+            _write_pktgen_control(
+                self._proc_root / assignment.thread_name,
+                scripts.thread_scripts[assignment.thread_name],
             )
-            assignment.source_path.write_text(
-                scripts.device_scripts[assignment.device_name], encoding="utf-8"
+            _write_pktgen_control(
+                assignment.source_path,
+                scripts.device_scripts[assignment.device_name],
             )
         return assignments
 
     def start(self) -> None:
-        (self._proc_root / "pgctrl").write_text("start\n", encoding="utf-8")
+        _write_pktgen_control(self._proc_root / "pgctrl", "start\n")
 
     def stop(self) -> None:
-        (self._proc_root / "pgctrl").write_text("stop\n", encoding="utf-8")
+        _write_pktgen_control(self._proc_root / "pgctrl", "stop\n")
 
     def collect_results(
         self,
@@ -258,3 +281,22 @@ def write_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8") as handle:
         for record in records:
             handle.write(json.dumps(record, sort_keys=True) + "\n")
+
+
+def _write_pktgen_control(path: Path, script: str) -> None:
+    if not _is_real_procfs_path(path):
+        path.write_text(script, encoding="utf-8")
+        return
+
+    for command in script.splitlines():
+        command = command.strip()
+        if command:
+            path.write_text(command + "\n", encoding="utf-8")
+
+
+def _is_real_procfs_path(path: Path) -> bool:
+    try:
+        path.resolve().relative_to("/proc")
+    except ValueError:
+        return False
+    return True

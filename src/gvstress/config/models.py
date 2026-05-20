@@ -189,6 +189,16 @@ class ScenarioConfig(StrictModel):
         return self
 
 
+class PktgenInterfaceConfig(StrictModel):
+    name: str
+    dst_mac: str | None = None
+    src_mac: str | None = None
+    dst_ip: str | None = None
+    src_ip: str | None = None
+    udp: bool = True
+    count: int = 0
+
+
 class PktgenConfig(StrictModel):
     interfaces: list[str]
     duration: int = 300
@@ -197,6 +207,7 @@ class PktgenConfig(StrictModel):
     rate: str | None = None
     ratep: int | None = None
     xmit_mode: str = "start_xmit"
+    network: list[PktgenInterfaceConfig] | None = None
 
     @model_validator(mode="after")
     def validate_rate_configuration(self) -> PktgenConfig:
