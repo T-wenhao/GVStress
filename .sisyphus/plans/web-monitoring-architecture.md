@@ -205,7 +205,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(node): add gvstress node service skeleton` | Files: `src/gvstress/**`, `tests/contracts/**`
 
-- [ ] 3. Define GVStress Prometheus metrics contract
+- [x] 3. Define GVStress Prometheus metrics contract
 
   **What to do**: Define custom `/metrics` names, labels, lifecycle rules, and mapping from current pktgen/NIC/report data. Metrics include test running, elapsed seconds, expected packets, packets sent, pktgen errors, job state, node role, last report verdict, and artifact timestamp.
   **Must NOT do**: Do not duplicate node_exporter CPU/memory/NIC byte counters except when adding domain labels to test-specific status.
@@ -244,7 +244,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `docs(metrics): define gvstress prometheus contract` | Files: `docs/**`, `tests/contracts/**`
 
-- [ ] 4. Write deployment decision record
+- [x] 4. Write deployment decision record
 
   **What to do**: Create an architecture decision record explaining native vs container deployment, Docker Compose boundaries, host-network/privileged requirements, and why `gvstress-node` should support native systemd first for datapath reliability.
   **Must NOT do**: Do not claim Docker bridge is acceptable for performance-sensitive pktgen traffic.

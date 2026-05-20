@@ -4,6 +4,8 @@ import typer
 
 from gvstress import __version__
 
+from gvstress.node.cli import app as node_app
+
 from .baseline import app as baseline_app
 from .dut import app as dut_app
 from .dut_agent import app as dut_agent_app
@@ -16,6 +18,7 @@ app.add_typer(baseline_app, name="baseline")
 app.add_typer(dut_app, name="dut")
 app.add_typer(dut_agent_app, name="dut-agent")
 app.add_typer(fakecam_app, name="fakecam")
+app.add_typer(node_app, name="node")
 app.add_typer(report_app, name="report")
 app.add_typer(test_app, name="test")
 
