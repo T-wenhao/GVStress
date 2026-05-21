@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GVStress Monitor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <h1>GVStress</h1>
+            <span class="tagline">GigE Vision Stress Testing</span>
+        </div>
+        <nav class="nav">
+            <a href="#status" class="nav-link active" data-section="status">Status</a>
+            <a href="#tasks" class="nav-link" data-section="tasks">Tasks</a>
+            <a href="#reports" class="nav-link" data-section="reports">Reports</a>
+            <a href="#grafana" class="nav-link external" target="_blank">Grafana</a>
+        </nav>
+    </header>
+
+    <main class="main">
+        <!-- Node Status Section -->
+        <section id="status" class="section active">
+            <div class="section-header">
+                <h2>Node Status</h2>
+                <button class="btn-refresh" onclick="refreshNodeStatus()">Refresh</button>
+            </div>
+            <div class="node-grid" id="node-grid">
+                <!-- Node cards will be populated by JS -->
+            </div>
+            <div class="metrics-panel">
+                <h3>Live Metrics</h3>
+                <div class="metrics-grid" id="metrics-grid">
+                    <!-- Metrics will be populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Task Creation Section -->
+        <section id="tasks" class="section">
+            <div class="section-header">
+                <h2>Task Management</h2>
+            </div>
+            <div class="task-layout">
+                <div class="task-form-panel">
+                    <h3>Create New Task</h3>
+                    <form id="task-form" class="form">
+                        <div class="form-group">
+                            <label for="task-name">Task Name</label>
+                            <input type="text" id="task-name" name="name" required placeholder="e.g., smoke-test-001">
+                        </div>
+                        <div class="form-group">
+                            <label for="task-scenario">Scenario</label>
+                            <select id="task-scenario" name="scenario" required>
+                                <option value="smoke">Smoke (60s)</option>
+                                <option value="soak">Soak (1800s)</option>
+                                <option value="four_stream">Four Stream (300s)</option>
+                                <option value="loss_injection">Loss Injection (300s)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-node">Target Node</label>
+                            <select id="task-node" name="node_id" required>
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Create Task</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="task-list-panel">
+                    <h3>Active Tasks</h3>
+                    <div class="task-list" id="task-list">
+                        <!-- Tasks will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <div class="section-header">
+                <h2>Reports</h2>
+                <div class="filter-bar">
+                    <input type="text" id="report-search" placeholder="Search by run ID..." class="search-input">
+                    <select id="report-verdict-filter" class="filter-select">
+                        <option value="">All Verdicts</option>
+                        <option value="pass">Pass</option>
+                        <option value="warn">Warn</option>
+                        <option value="fail">Fail</option>
+                        <option value="not_applicable">N/A</option>
+                    </select>
+                </div>
+            </div>
+            <div class="report-table-container">
+                <table class="report-table" id="report-table">
+                    <thead>
+                        <tr>
+                            <th>Run ID</th>
+                            <th>Timestamp</th>
+                            <th>Verdict</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <!-- Reports will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- Pagination controls -->
+            </div>
+            <div class="report-detail-modal" id="report-modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Report Details</h3>
+                        <button class="modal-close" onclick="closeReportModal()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="report-detail">
+                        <!-- Report details will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-info">
+            <span id="connection-status">Connected</span>
+            <span class="separator">|</span>
+            <span id="last-update">Last update: --</span>
+        </div>
+        <div class="footer-links">
+            <a href="/api/docs">API Docs</a>
+            <a href="/metrics">Prometheus Metrics</a>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
