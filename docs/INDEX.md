@@ -19,6 +19,7 @@
 | [部署指南 (中文)](deployment-zh.md) | 安装和配置说明 |
 | [测试指南 (英文)](testing.md) | Testing Guide (English) |
 | [部署指南 (英文)](deployment.md) | Deployment Guide (English) |
+| [Web 监控验收 TODO](web-monitoring-validation-todos.md) | 受硬件或环境限制的剩余验证项 |
 
 ## 文档结构
 
@@ -31,7 +32,8 @@ docs/
 ├── testing-zh.md                 # 测试指南（中文）
 ├── deployment-zh.md              # 部署指南（中文）
 ├── testing.md                    # 测试指南（英文）
-└── deployment.md                 # 部署指南（英文）
+├── deployment.md                 # 部署指南（英文）
+└── web-monitoring-validation-todos.md # Web 监控验收剩余项
 ```
 
 ## 推荐阅读顺序

@@ -1,0 +1,45 @@
+# HELP gvstress_node_up Health indicator for the GVStress node.
+# TYPE gvstress_node_up gauge
+gvstress_node_up 1
+
+# HELP gvstress_test_running Indicates whether a test scenario is currently active.
+# TYPE gvstress_test_running gauge
+gvstress_test_running{scenario="smoke"} 1
+
+# HELP gvstress_test_elapsed_seconds Elapsed time in seconds since the current test started.
+# TYPE gvstress_test_elapsed_seconds gauge
+gvstress_test_elapsed_seconds{scenario="smoke",run_id="abc123"} 42.5
+
+# HELP gvstress_test_packets_sent Total number of packets sent by pktgen during the current run.
+# TYPE gvstress_test_packets_sent gauge
+gvstress_test_packets_sent{run_id="abc123",interface="eno1"} 1000000
+
+# HELP gvstress_test_pktgen_errors Number of pktgen errors detected during the current run.
+# TYPE gvstress_test_pktgen_errors gauge
+gvstress_test_pktgen_errors{run_id="abc123",interface="eno1"} 0
+
+# HELP gvstress_test_expected_packets Expected number of packets to be received by the DUT.
+# TYPE gvstress_test_expected_packets gauge
+gvstress_test_expected_packets{run_id="abc123",interface="eno1"} 1000000
+
+# HELP gvstress_job_state_info Current job state as an info-style metric.
+# TYPE gvstress_job_state_info gauge
+gvstress_job_state_info{state="running"} 1
+gvstress_job_state_info{state="idle"} 0
+gvstress_job_state_info{state="preflight"} 0
+gvstress_job_state_info{state="completed"} 0
+gvstress_job_state_info{state="failed"} 0
+gvstress_job_state_info{state="interrupted"} 0
+
+# HELP gvstress_test_verdict_info Test verdict as an info-style metric.
+# TYPE gvstress_test_verdict_info gauge
+gvstress_test_verdict_info{verdict="pass",run_id="abc123"} 1
+gvstress_test_verdict_info{verdict="warn",run_id="abc123"} 0
+gvstress_test_verdict_info{verdict="fail",run_id="abc123"} 0
+gvstress_test_verdict_info{verdict="not_applicable",run_id="abc123"} 0
+
+# HELP gvstress_test_role Role of the current GVStress instance in the test topology.
+# TYPE gvstress_test_role gauge
+gvstress_test_role{role="controller"} 1
+gvstress_test_role{role="dut"} 0
+gvstress_test_role{role="generator"} 0

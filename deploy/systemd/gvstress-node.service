@@ -1,0 +1,32 @@
+[Unit]
+Description=GVStress Node Exporter Service
+Documentation=https://github.com/prometheus/node_exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__NODE_EXPORTER_USER__
+Group=__NODE_EXPORTER_USER__
+ExecStart=__INSTALL_PREFIX__/node_exporter \
+    --web.listen-address="__LISTEN_ADDRESS__:__LISTEN_PORT__" \
+    --path.procfs=/host/proc \
+    --path.sysfs=/host/sys \
+    --path.rootfs=/rootfs \
+    --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($|/)"
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gvstress-node
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=__DATA_DIR__ __LOG_DIR__
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
