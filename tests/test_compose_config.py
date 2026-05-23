@@ -1,10 +1,30 @@
 """Tests for Docker Compose configuration."""
 
+import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 import yaml
+
+
+def compose_command() -> list[str] | None:
+    """Return an available Compose command prefix."""
+    candidates = [
+        ["docker", "compose"],
+        ["docker-compose"],
+    ]
+    for candidate in candidates:
+        if shutil.which(candidate[0]) is None:
+            continue
+        result = subprocess.run(
+            [*candidate, "version"],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            return candidate
+    return None
 
 
 def test_compose_file_exists():
@@ -15,11 +35,21 @@ def test_compose_file_exists():
 
 def test_compose_config_valid():
     """Compose config validates without errors."""
+    command = compose_command()
+    if command is None:
+        pytest.skip("Docker Compose is not available in this environment")
     result = subprocess.run(
-        ["docker", "compose", "-f", "deploy/compose/docker-compose.single.yml", "config"],
+        [*command, "-f", "deploy/compose/docker-compose.single.yml", "config"],
         capture_output=True,
         text=True,
     )
+    unsupported = (
+        "unknown shorthand flag" in result.stderr
+        or "not a docker command" in result.stderr
+        or "command not found" in result.stderr
+    )
+    if result.returncode != 0 and unsupported:
+        pytest.skip(f"Docker Compose is not supported: {result.stderr.strip()}")
     assert result.returncode == 0, f"Config failed: {result.stderr}"
 
 

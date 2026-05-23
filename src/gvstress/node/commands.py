@@ -1,5 +1,6 @@
 """Safe command execution for node service."""
 
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,9 @@ class CommandExecutor:
             return False
 
         executable = cmd[0]
+        blocked_tokens = (";", "&&", "||", "|", "`", "$(", ">", "<")
+        if any(token in arg for arg in cmd for token in blocked_tokens):
+            return False
 
         # Check if command is in whitelist
         if executable not in self.ALLOWED_COMMANDS:
@@ -53,11 +57,14 @@ class CommandExecutor:
                 return False
 
         # Validate arguments
-        for arg in cmd[1:]:
+        allowed_literals = set(config.get("subcommands", [])) | set(config.get("args", []))
+        for index, arg in enumerate(cmd[1:], start=1):
             if arg.startswith("-"):
                 if config.get("args"):
                     if arg not in config["args"]:
                         return False
+                else:
+                    return False
             elif arg.startswith("/"):
                 # Validate paths
                 if config.get("paths"):
@@ -67,6 +74,15 @@ class CommandExecutor:
                     )
                     if not allowed:
                         return False
+                else:
+                    return False
+            elif executable == "ethtool" and index == 2 and cmd[1] == "-S":
+                # Interface names are positional and host-specific.
+                continue
+            elif allowed_literals and arg not in allowed_literals:
+                return False
+            elif not allowed_literals:
+                return False
 
         return True
 
@@ -74,6 +90,20 @@ class CommandExecutor:
         """Execute a validated command."""
         if not self.validate_command(cmd):
             raise CommandError(f"Command not allowed: {cmd}")
+
+        if shutil.which(cmd[0]) is None:
+            result = {
+                "success": False,
+                "stdout": "",
+                "stderr": f"Command not found: {cmd[0]}",
+                "returncode": 127,
+            }
+            self._history.append({
+                "command": cmd,
+                "returncode": result["returncode"],
+                "success": result["success"],
+            })
+            return result
 
         try:
             result = subprocess.run(

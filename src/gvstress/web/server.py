@@ -9,7 +9,7 @@ import socketserver
 import urllib.parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from gvstress.controller.service import ControllerService
 from gvstress.report.indexer import scan_reports
@@ -238,6 +238,28 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
     web_dir: Path
 
 
+def create_handler(
+    data_dir: Path | None = None,
+    artifacts_dir: Path | None = None,
+    web_dir: Path | None = None,
+) -> Callable[[socket.socket, tuple[str, int], HTTPServer], WebAPIHandler]:
+    """Create a configured request handler class for tests or custom servers."""
+
+    class ConfiguredWebAPIHandler(WebAPIHandler):
+        def __init__(
+            self,
+            request: socket.socket,
+            client_address: tuple[str, int],
+            server: HTTPServer,
+        ) -> None:
+            server.data_dir = data_dir or Path.cwd() / "data"  # type: ignore[attr-defined]
+            server.artifacts_dir = artifacts_dir or Path.cwd() / "artifacts"  # type: ignore[attr-defined]
+            server.web_dir = web_dir or Path(__file__).parent.parent.parent.parent / "web"  # type: ignore[attr-defined]
+            super().__init__(request, client_address, server)
+
+    return ConfiguredWebAPIHandler
+
+
 def create_server(
     host: str = "localhost",
     port: int = 8080,
@@ -246,7 +268,10 @@ def create_server(
     web_dir: Path | None = None,
 ) -> ThreadedHTTPServer:
     """Create a configured HTTP server."""
-    server = ThreadedHTTPServer((host, port), WebAPIHandler)
+    server = ThreadedHTTPServer(
+        (host, port),
+        create_handler(data_dir=data_dir, artifacts_dir=artifacts_dir, web_dir=web_dir),
+    )
     server.data_dir = data_dir or Path.cwd() / "data"
     server.artifacts_dir = artifacts_dir or Path.cwd() / "artifacts"
     server.web_dir = web_dir or Path(__file__).parent.parent.parent.parent / "web"

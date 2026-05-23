@@ -126,7 +126,7 @@ Wave 5: Final verification wave
 > Implementation + Test = ONE task. Never separate.
 > EVERY task MUST have: Agent Profile + Parallelization + QA Scenarios.
 
-- [ ] 1. Define topology, node, job, and metrics domain models
+- [x] 1. Define topology, node, job, and metrics domain models
 
   **What to do**: Add typed models for `NodeRole`, `NodeEndpoint`, `TestTopology`, `TestJob`, `JobState`, `MetricTarget`, `DeploymentMode`, and report index records. Place them under a new service/domain module, reusing existing Pydantic style from `src/gvstress/config/models.py`. Include validation for single-node and two-node layouts.
   **Must NOT do**: Do not hard-code `ht`, `192.168.11.139`, `enp8s0`, or `eno1`.
@@ -283,7 +283,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `docs(arch): record deployment architecture` | Files: `docs/**`
 
-- [ ] 5. Build controller API and persistent job store
+- [x] 5. Build controller API and persistent job store
 
   **What to do**: Add controller service with APIs to create jobs, list jobs, get job status, stop jobs, and resolve artifact/report paths. Start with file-backed storage under artifacts or a lightweight SQLite database; choose file-backed JSON for first version to match current artifact style.
   **Must NOT do**: Do not require a database server in V1.
@@ -322,7 +322,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(controller): add job api and store` | Files: `src/gvstress/**`, `tests/integration/**`
 
-- [ ] 6. Implement `gvstress-node` custom `/metrics`
+- [x] 6. Implement `gvstress-node` custom `/metrics`
 
   **What to do**: Add Prometheus text endpoint or CLI-generated text for custom GVStress metrics. Export current job state, pktgen progress, last result, node role, and capability state. Include test-specific labels without high-cardinality raw paths.
   **Must NOT do**: Do not export passwords, raw command lines, or absolute private paths as labels.
@@ -361,7 +361,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(node): expose prometheus metrics` | Files: `src/gvstress/**`, `tests/contracts/**`
 
-- [ ] 7. Add Prometheus, node_exporter, and Grafana deployment pack
+- [x] 7. Add Prometheus, node_exporter, and Grafana deployment pack
 
   **What to do**: Add `deploy/compose` manifests and configuration for Prometheus scraping controller/node/node_exporter targets, plus Grafana dashboards for test status, CPU/memory, network throughput, errors/drops, and IRQ CPU distribution.
   **Must NOT do**: Do not make Grafana required for test execution.
@@ -400,7 +400,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(deploy): add monitoring compose pack` | Files: `deploy/**`, `tests/**`
 
-- [ ] 8. Implement report indexer and report API
+- [x] 8. Implement report indexer and report API
 
   **What to do**: Build a report index that scans existing artifacts, extracts run ID, timestamp, scenario, duration, pktgen stats, report paths, and verdict context. Expose API for listing and reading report summaries.
   **Must NOT do**: Do not rewrite existing report schemas in this task.
@@ -439,7 +439,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(report): add report index api` | Files: `src/gvstress/**`, `tests/integration/**`
 
-- [ ] 9. Build Web UI MVP
+- [x] 9. Build Web UI MVP
 
   **What to do**: Add Web UI for node status, topology selection, test creation, live job status, embedded/link-out Grafana panels, and report browsing. Use controller APIs only.
   **Must NOT do**: Do not run privileged operations from browser or frontend code.
@@ -479,7 +479,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(web): add monitoring ui mvp` | Files: `web/**`, `src/gvstress/**`, `tests/**`
 
-- [ ] 10. Add native and Compose deployment scripts
+- [x] 10. Add native and Compose deployment scripts
 
   **What to do**: Add `deploy/scripts/install-node-native.sh`, `deploy/systemd/gvstress-node.service`, `deploy/scripts/start-single-node.sh`, and Compose manifests for controller/Web/Prometheus/Grafana. Scripts must be idempotent and require explicit host/interface parameters.
   **Must NOT do**: Do not embed passwords or run destructive commands without confirmation.
@@ -518,7 +518,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(deploy): add native and compose deployment scripts` | Files: `deploy/**`, `docs/**`, `tests/**`
 
-- [ ] 11. Implement two-node orchestration
+- [x] 11. Implement two-node orchestration
 
   **What to do**: Add controller support for sender node A and receiver node B. Controller must verify both node health endpoints, configure roles, start sender, monitor receiver, and aggregate report/metrics references.
   **Must NOT do**: Do not require B to run Web UI or Grafana.
@@ -557,7 +557,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `feat(controller): support two-node orchestration` | Files: `src/gvstress/**`, `tests/integration/**`
 
-- [ ] 12. Retire and replace ad-hoc `soak_test.py`
+- [x] 12. Retire and replace ad-hoc `soak_test.py`
 
   **What to do**: Move useful lessons from `soak_test.py` into supported services/tests, then remove or quarantine the untracked script. Ensure no hard-coded credentials remain. Add a migration note mapping old commands to Web/controller workflows.
   **Must NOT do**: Do not keep `soak_test.py` as the official 12h/24h entrypoint.
@@ -596,7 +596,7 @@ Wave 5: Final verification wave
 
   **Commit**: YES | Message: `chore(soak): replace ad hoc soak script` | Files: `soak_test.py`, `docs/**`, `tests/**`
 
-- [ ] 13. End-to-end validation on single-node and two-node modes
+- [x] 13. End-to-end validation on single-node and two-node modes
 
   **What to do**: Run automated integration tests and at least one hardware validation. Single-node hardware run: 5-minute pktgen job with Web/controller, Prometheus samples, report, and Grafana dashboard. Two-node can use fake services first, then documented manual hardware optional.
   **Must NOT do**: Do not mark hardware success based only on Web UI status; verify pktgen result, node metrics, and report artifacts.
@@ -636,7 +636,7 @@ Wave 5: Final verification wave
 
   **Commit**: NO | Message: `test(e2e): validate web monitoring stack` | Files: [evidence only]
 
-- [ ] 14. Write operator guide and test strategy documentation
+- [x] 14. Write operator guide and test strategy documentation
 
   **What to do**: Document architecture, deployment modes, single-node/two-node setup, monitoring interpretation, report semantics, pktgen limitations, and how to interpret RX background traffic. Include test matrix.
   **Must NOT do**: Do not overclaim GigE Vision equivalence for pktgen baseline.
@@ -680,10 +680,10 @@ Wave 5: Final verification wave
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 > **Do NOT auto-proceed after verification. Wait for user's explicit approval before marking work complete.**
 > **Never mark F1-F4 as checked before getting user's okay.** Rejection or user feedback -> fix -> re-run -> present again -> wait for okay.
-- [ ] F1. Plan Compliance Audit — oracle
-- [ ] F2. Code Quality Review — unspecified-high
-- [ ] F3. Real Manual QA — unspecified-high (+ playwright for UI)
-- [ ] F4. Scope Fidelity Check — deep
+- [x] F1. Plan Compliance Audit — oracle
+- [x] F2. Code Quality Review — unspecified-high
+- [x] F3. Real Manual QA — unspecified-high (+ playwright for UI)
+- [x] F4. Scope Fidelity Check — deep
 ## Commit Strategy
 - Commit by wave boundary when each wave passes its tests.
 - Do not commit operational secrets, local credentials, generated coverage, or ad-hoc hardware artifacts.

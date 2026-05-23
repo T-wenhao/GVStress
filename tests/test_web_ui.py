@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from gvstress.web.server import create_server, run_server, WebAPIHandler
+from gvstress.web.server import create_handler, create_server, run_server, WebAPIHandler
 
 
 @pytest.fixture
@@ -35,6 +35,15 @@ def web_test_env(tmp_path: Path) -> tuple[Path, Path, Path]:
     return data_dir, artifacts_dir, web_dir
 
 
+def make_server(handler):
+    from http.server import HTTPServer
+
+    try:
+        return HTTPServer(("localhost", 0), handler)
+    except PermissionError as exc:
+        pytest.skip(f"Local socket binding is not permitted: {exc}")
+
+
 def test_create_handler_returns_callable(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
     handler = create_handler(data_dir, artifacts_dir, web_dir)
@@ -43,10 +52,9 @@ def test_create_handler_returns_callable(web_test_env: tuple[Path, Path, Path]) 
 
 def test_handler_serves_index_html(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -63,10 +71,9 @@ def test_handler_serves_index_html(web_test_env: tuple[Path, Path, Path]) -> Non
 
 def test_api_nodes_endpoint(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -89,10 +96,9 @@ def test_api_nodes_endpoint(web_test_env: tuple[Path, Path, Path]) -> None:
 
 def test_api_tasks_endpoint_empty(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -114,10 +120,9 @@ def test_api_tasks_endpoint_empty(web_test_env: tuple[Path, Path, Path]) -> None
 
 def test_api_tasks_create(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -141,10 +146,9 @@ def test_api_tasks_create(web_test_env: tuple[Path, Path, Path]) -> None:
 
 def test_api_reports_endpoint_empty(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -170,10 +174,9 @@ def test_api_reports_with_data(web_test_env: tuple[Path, Path, Path]) -> None:
     run_dir.mkdir(parents=True)
     run_json = run_dir / "run.json"
     run_json.write_text(json.dumps({"run_id": "run-001", "timestamp": "2026-05-21T10:00:00Z", "verdict": "pass"}))
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -197,10 +200,9 @@ def test_api_reports_with_data(web_test_env: tuple[Path, Path, Path]) -> None:
 
 def test_metrics_endpoint(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -219,10 +221,9 @@ def test_metrics_endpoint(web_test_env: tuple[Path, Path, Path]) -> None:
 
 def test_static_css_served(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
@@ -239,10 +240,9 @@ def test_static_css_served(web_test_env: tuple[Path, Path, Path]) -> None:
 
 def test_static_js_served(web_test_env: tuple[Path, Path, Path]) -> None:
     data_dir, artifacts_dir, web_dir = web_test_env
-    from http.server import HTTPServer
 
     handler = create_handler(data_dir, artifacts_dir, web_dir)
-    server = HTTPServer(("localhost", 0), handler)
+    server = make_server(handler)
     port = server.server_port
     thread = threading.Thread(target=server.handle_request)
     thread.start()
