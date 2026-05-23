@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from gvstress.web.server import create_handler, create_server, run_server, WebAPIHandler
+from gvstress.web.server import _api_endpoint, create_handler, create_server, run_server, WebAPIHandler
 
 
 @pytest.fixture
@@ -48,6 +48,11 @@ def test_create_handler_returns_callable(web_test_env: tuple[Path, Path, Path]) 
     data_dir, artifacts_dir, web_dir = web_test_env
     handler = create_handler(data_dir, artifacts_dir, web_dir)
     assert callable(handler)
+
+
+def test_api_endpoint_strips_api_prefix() -> None:
+    assert _api_endpoint("/api/nodes") == "nodes"
+    assert _api_endpoint("/api/reports/detail") == "reports/detail"
 
 
 def test_handler_serves_index_html(web_test_env: tuple[Path, Path, Path]) -> None:

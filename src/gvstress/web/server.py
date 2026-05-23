@@ -15,6 +15,11 @@ from gvstress.controller.service import ControllerService
 from gvstress.report.indexer import scan_reports
 
 
+def _api_endpoint(path: str) -> str:
+    """Return the endpoint name for an /api/ request path."""
+    return path.removeprefix("/api/")
+
+
 class WebAPIHandler(SimpleHTTPRequestHandler):
     """HTTP handler serving static files and API endpoints."""
 
@@ -41,7 +46,7 @@ class WebAPIHandler(SimpleHTTPRequestHandler):
         query = urllib.parse.parse_qs(parsed.query)
 
         if path.startswith("/api/"):
-            self.handle_api_get(path[4:], query)
+            self.handle_api_get(_api_endpoint(path), query)
         elif path == "/" or path == "/index.html":
             self.serve_index()
         elif path.startswith("/static/"):
@@ -62,7 +67,7 @@ class WebAPIHandler(SimpleHTTPRequestHandler):
                 data = json.loads(body) if body else {}
             except json.JSONDecodeError:
                 data = {}
-            self.handle_api_post(path[4:], data)
+            self.handle_api_post(_api_endpoint(path), data)
         else:
             self.send_error(404)
 
