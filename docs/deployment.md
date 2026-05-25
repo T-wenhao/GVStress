@@ -7,7 +7,15 @@ This guide covers installing and configuring GVStress components on generator an
 GVStress consists of:
 - **Generator**: Machine running fakecam workers that simulate GigE Vision cameras
 - **DUT**: Device under test (e.g., frame grabber, vision system) that receives camera streams
+- **Node service**: Local host health, capability, and status surface
+- **Controller service**: Lightweight HTTP API for persistent job records
+- **Web UI**: Browser UI for nodes, tasks, report browsing, and `/metrics`
 - **Control host**: Machine orchestrating tests (can be same as generator)
+
+For the deployment decision record behind these modes, see
+[Deployment Architecture ADR](deployment-architecture.md). For production
+operation of the Web monitoring stack, see
+[Web Monitoring Operator Guide](web-monitoring-operator-guide.md).
 
 ## Prerequisites
 
@@ -43,6 +51,8 @@ GVStress consists of:
 3. Verify installation:
    ```bash
    python -m gvstress --version
+   python -m gvstress node health --json
+   python -m gvstress node capabilities --json
    ```
 
 ### DUT Agent Installation
@@ -63,6 +73,66 @@ The DUT agent runs remotely via SSH. Install on DUT:
    ```bash
    ssh user@dut "python -m gvstress.cli.dut_agent ping"
    ```
+
+### Native Node Service
+
+For hosts that need persistent node-side monitoring or pktgen access, prefer the
+native/systemd path:
+
+```bash
+sudo deploy/scripts/install-node-native.sh
+sudo systemctl enable --now gvstress-node
+```
+
+The systemd unit template lives at `deploy/systemd/gvstress-node.service`.
+Hardware pktgen access still requires Linux pktgen support plus root or
+CAP_NET_ADMIN.
+
+### Controller and Web UI
+
+Run the controller API:
+
+```bash
+python -m gvstress controller serve --host 0.0.0.0 --port 8079 --data-dir data
+```
+
+Run the Web UI:
+
+```bash
+python -m gvstress web serve \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+The Web UI exposes:
+
+- `/api/nodes`
+- `/api/tasks`
+- `/api/reports`
+- `/metrics`
+
+### Docker Compose Monitoring Stack
+
+The compose pack is intended for control-plane and monitoring development or
+hybrid deployments. Validate it with the Compose implementation available on
+the host:
+
+```bash
+docker compose -f deploy/compose/docker-compose.single.yml config
+```
+
+If the Docker plugin is unavailable, try the legacy binary:
+
+```bash
+docker-compose -f deploy/compose/docker-compose.single.yml config
+```
+
+Do not use Docker bridge networking for performance-sensitive pktgen datapath
+validation. Use native/systemd or the host-network privileged container mode
+documented in the operator guide.
 
 ## SSH Configuration
 

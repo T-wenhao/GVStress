@@ -15,7 +15,7 @@ GigE Vision 压力测试框架
 | 选项 | 简写 | 说明 |
 |------|------|------|
 | `--version` | `-v` | 显示版本号并退出 |
-| `--help` | `-h` | 显示帮助信息并退出 |
+| `--help` | - | 显示帮助信息并退出 |
 
 ### 命令组
 
@@ -27,6 +27,9 @@ GigE Vision 压力测试框架
 | `report` | 查看和导出测试报告 |
 | `baseline` | 运行基线基准测试 |
 | `dut-agent` | 远程 DUT 代理 |
+| `node` | 本机 GVStress 节点健康、能力和状态命令 |
+| `controller` | Controller HTTP API 服务 |
+| `web` | Web 监控 UI 服务 |
 
 ### 退出码
 
@@ -37,6 +40,180 @@ GigE Vision 压力测试框架
 | 2 | 警告 (WARN) |
 | 3 | 失败 (FAIL) |
 | 4 | 不适用/无效 (NOT_APPLICABLE) |
+
+---
+
+## node 命令组
+
+查看本机节点的健康状态、能力和完整状态。该命令组用于本机 smoke、部署验收、
+以及 Web 监控节点侧信息检查。
+
+### node health
+
+检查本机节点健康状态。
+
+```bash
+gvstress node health [OPTIONS]
+```
+
+#### 选项
+
+| 选项 | 简写 | 必需 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `--config` | `-c` | 否 | - | 节点配置文件路径 |
+| `--json` | `-j` | 否 | false | 输出 JSON 格式 |
+
+#### 示例
+
+```bash
+python -m gvstress node health --json
+```
+
+#### JSON 输出示例
+
+```json
+{
+  "status": "ok",
+  "pid": 12345,
+  "uptime_seconds": 0.1
+}
+```
+
+### node capabilities
+
+显示本机节点能力，包括检测到的网络接口、pktgen 是否可用、以及是否具有
+NET_ADMIN/root 权限。
+
+```bash
+gvstress node capabilities [OPTIONS]
+```
+
+#### 选项
+
+| 选项 | 简写 | 必需 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `--config` | `-c` | 否 | - | 节点配置文件路径 |
+| `--json` | `-j` | 否 | false | 输出 JSON 格式 |
+
+#### 示例
+
+```bash
+python -m gvstress node capabilities --json
+```
+
+#### JSON 输出示例
+
+```json
+{
+  "interfaces": ["en0"],
+  "pktgen_available": false,
+  "has_net_admin": false,
+  "version": "0.1.0"
+}
+```
+
+### node status
+
+显示健康状态和能力的组合视图。
+
+```bash
+gvstress node status [OPTIONS]
+```
+
+#### 选项
+
+| 选项 | 简写 | 必需 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `--config` | `-c` | 否 | - | 节点配置文件路径 |
+| `--json` | `-j` | 否 | false | 输出 JSON 格式 |
+
+#### 示例
+
+```bash
+python -m gvstress node status --json
+```
+
+---
+
+## controller 命令组
+
+运行轻量 Controller HTTP API。Controller 当前负责保存任务记录，并提供任务
+列表和任务详情 API，供 Web UI 或脚本使用。
+
+### controller serve
+
+```bash
+gvstress controller serve [OPTIONS]
+```
+
+#### 选项
+
+| 选项 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--host` | 否 | `localhost` | 监听地址 |
+| `--port` | 否 | `8079` | 监听端口 |
+| `--data-dir` | 否 | `data` | 任务状态存储目录 |
+
+#### 示例
+
+```bash
+python -m gvstress controller serve --host localhost --port 8079 --data-dir data
+```
+
+#### HTTP 端点
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/health` | 健康检查 |
+| GET | `/api/jobs` | 列出任务 |
+| POST | `/api/jobs` | 创建任务记录 |
+| GET | `/api/jobs/<job-id>` | 查看任务详情 |
+
+---
+
+## web 命令组
+
+运行 Web 监控 UI。Web 服务会读取 Controller 任务状态和 artifacts 报告目录，
+并暴露 Prometheus 兼容的 `/metrics` 端点。
+
+### web serve
+
+```bash
+gvstress web serve [OPTIONS]
+```
+
+#### 选项
+
+| 选项 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--host` | 否 | `localhost` | 监听地址 |
+| `--port` | 否 | `8080` | 监听端口 |
+| `--data-dir` | 否 | `data` | Controller 任务状态目录 |
+| `--artifacts-dir` | 否 | `artifacts` | 测试报告和运行产物目录 |
+| `--web-dir` | 否 | - | 静态 Web 资源目录；开发时可指定 `web` |
+
+#### 示例
+
+```bash
+python -m gvstress web serve \
+    --host localhost \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+#### HTTP 端点
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/` | Web UI 首页 |
+| GET | `/api/nodes` | 节点和监控摘要 |
+| GET | `/api/tasks` | Controller 任务列表 |
+| POST | `/api/tasks` | 创建任务记录 |
+| GET | `/api/reports` | 报告索引 |
+| GET | `/api/reports/detail?path=<path>` | 报告详情 |
+| GET | `/metrics` | Prometheus 文本格式指标 |
 
 ---
 

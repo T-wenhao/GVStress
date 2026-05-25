@@ -30,9 +30,20 @@ pip install -e .
 
 ```bash
 python -m gvstress --version
+python -m gvstress --help
 ```
 
 如果显示版本号，说明安装成功。
+
+### 验证本机节点能力
+
+```bash
+python -m gvstress node health --json
+python -m gvstress node capabilities --json
+```
+
+这些命令不需要真实相机或 DUT，适合先确认本机 Python 包、节点状态和基础能力
+检测是否正常。
 
 ## 2. 安装可选依赖
 
@@ -191,7 +202,34 @@ python -m gvstress report show --latest --source artifacts/smoke/runs --json | j
 cat artifacts/smoke/runs/<run-id>/reports/summary.md
 ```
 
-### 步骤 5: 停止模拟相机
+### 步骤 5: 启动本机 Web 监控（可选）
+
+如果只想在本机查看任务、报告索引和 `/metrics`，可以启动 Controller 和 Web UI：
+
+```bash
+python -m gvstress controller serve --host localhost --port 8079 --data-dir data
+```
+
+另开一个终端：
+
+```bash
+python -m gvstress web serve \
+    --host localhost \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+打开 `http://localhost:8080/`，或直接检查 API：
+
+```bash
+curl http://localhost:8079/health
+curl http://localhost:8080/api/nodes
+curl http://localhost:8080/metrics
+```
+
+### 步骤 6: 停止模拟相机
 
 ```bash
 python -m gvstress fakecam down --config my_fakecam.yaml

@@ -7,7 +7,13 @@
 GVStress 由以下组件组成：
 - **生成器 (Generator)**: 运行 fakecam 工作进程的机器，模拟 GigE Vision 相机
 - **被测设备 (DUT)**: 接收相机流的设备（如图像采集卡、视觉系统）
+- **Node 服务**: 本机节点健康、能力和状态检查入口
+- **Controller 服务**: 保存任务状态并提供轻量 HTTP API
+- **Web UI**: 浏览节点、任务、报告，并暴露 `/metrics`
 - **控制主机**: 协调测试的机器（可以与生成器相同）
+
+部署模式的取舍请参阅 [部署架构决策](deployment-architecture-zh.md)。生产和
+监控栈操作请参阅 [Web 监控操作指南](web-monitoring-operator-guide-zh.md)。
 
 ## 前置要求
 
@@ -43,6 +49,8 @@ pip install -e .
 **3. 验证安装：**
 ```bash
 python -m gvstress --version
+python -m gvstress node health --json
+python -m gvstress node capabilities --json
 ```
 
 ### DUT 代理安装
@@ -63,6 +71,62 @@ ssh user@dut "pip install pydantic typer"
 ```bash
 ssh user@dut "python -m gvstress.cli.dut_agent ping"
 ```
+
+### 原生 Node 服务
+
+如果主机需要长期运行节点侧监控或访问 pktgen，优先使用 native/systemd：
+
+```bash
+sudo deploy/scripts/install-node-native.sh
+sudo systemctl enable --now gvstress-node
+```
+
+systemd unit 模板位于 `deploy/systemd/gvstress-node.service`。硬件 pktgen
+访问仍然需要 Linux pktgen 支持，以及 root 或 CAP_NET_ADMIN 权限。
+
+### Controller 和 Web UI
+
+启动 Controller API：
+
+```bash
+python -m gvstress controller serve --host 0.0.0.0 --port 8079 --data-dir data
+```
+
+启动 Web UI：
+
+```bash
+python -m gvstress web serve \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+Web UI 提供：
+
+- `/api/nodes`
+- `/api/tasks`
+- `/api/reports`
+- `/metrics`
+
+### Docker Compose 监控栈
+
+Compose 包适用于控制平面、监控开发或 hybrid 部署。根据主机可用的 Compose
+实现进行验证：
+
+```bash
+docker compose -f deploy/compose/docker-compose.single.yml config
+```
+
+如果 Docker plugin 不可用，可尝试旧版二进制：
+
+```bash
+docker-compose -f deploy/compose/docker-compose.single.yml config
+```
+
+性能敏感的 pktgen 数据平面验收不要走 Docker bridge。请使用 native/systemd，
+或仅在操作指南明确说明时使用 host-network privileged 容器模式。
 
 ## SSH 配置
 

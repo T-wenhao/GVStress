@@ -71,6 +71,43 @@ python -m gvstress dut inspect \
     --user admin
 ```
 
+### Node and Web Monitoring
+
+Check local node health and capabilities before running service-level or
+hardware validation:
+
+```bash
+python -m gvstress node health --json
+python -m gvstress node capabilities --json
+python -m gvstress node status --json
+```
+
+Start the lightweight controller API:
+
+```bash
+python -m gvstress controller serve --host localhost --port 8079 --data-dir data
+```
+
+Start the Web monitoring UI in another terminal:
+
+```bash
+python -m gvstress web serve \
+    --host localhost \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+Useful checks:
+
+```bash
+curl http://localhost:8079/health
+curl http://localhost:8080/api/nodes
+curl http://localhost:8080/api/reports
+curl http://localhost:8080/metrics
+```
+
 ### Reports
 
 Report commands read from an artifact root. Scenario runs are stored under `<output>/<scenario-name>/runs/<run-id>/`.

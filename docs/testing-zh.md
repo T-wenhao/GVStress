@@ -71,6 +71,42 @@ python -m gvstress dut inspect \
     --user admin
 ```
 
+### 节点与 Web 监控
+
+在服务级验证或硬件验收前，可以先检查本机节点健康状态和能力：
+
+```bash
+python -m gvstress node health --json
+python -m gvstress node capabilities --json
+python -m gvstress node status --json
+```
+
+启动轻量 Controller API：
+
+```bash
+python -m gvstress controller serve --host localhost --port 8079 --data-dir data
+```
+
+另开一个终端启动 Web 监控 UI：
+
+```bash
+python -m gvstress web serve \
+    --host localhost \
+    --port 8080 \
+    --data-dir data \
+    --artifacts-dir artifacts \
+    --web-dir web
+```
+
+常用检查：
+
+```bash
+curl http://localhost:8079/health
+curl http://localhost:8080/api/nodes
+curl http://localhost:8080/api/reports
+curl http://localhost:8080/metrics
+```
+
 ### 报告查看
 
 报告命令从产物根目录读取数据。场景运行结果存储在 `<output>/<scenario-name>/runs/<run-id>/`。

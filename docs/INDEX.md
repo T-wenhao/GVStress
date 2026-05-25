@@ -6,33 +6,53 @@
 
 | 文档 | 说明 |
 |------|------|
-| [README (中文)](../README-zh.md) | 项目概述和快速开始 |
-| [快速入门指南](quickstart-zh.md) | 5 分钟开始第一个测试 |
-| [CLI 命令参考](cli-reference-zh.md) | 完整的命令行接口文档 |
+| [README（中文）](../README-zh.md) | 项目概览、快速开始、服务入口 |
+| [README（英文）](../README.md) | English overview and entry points |
+| [快速入门指南](quickstart-zh.md) | 5 分钟开始第一个测试，并验证本机服务命令 |
+| [CLI 命令参考](cli-reference-zh.md) | 完整命令行接口，包括 `node`、`controller`、`web` |
 
- ### 详细指南
+### 测试与运行
 
 | 文档 | 说明 |
 |------|------|
-| [双设备部署指南](dual-device-deployment-zh.md) | 控制主机+DUT 双设备部署详解 |
-| [测试指南 (中文)](testing-zh.md) | 运行测试和解读结果 |
-| [部署指南 (中文)](deployment-zh.md) | 安装和配置说明 |
-| [测试指南 (英文)](testing.md) | Testing Guide (English) |
-| [部署指南 (英文)](deployment.md) | Deployment Guide (English) |
+| [测试指南（中文）](testing-zh.md) | 运行测试、查看报告、解读结果 |
+| [测试指南（英文）](testing.md) | Testing guide |
+| [双设备部署指南](dual-device-deployment-zh.md) | 控制主机 + 生成器 + DUT 拓扑详解 |
+| [从临时 soak 脚本迁移](migration-from-soak-test.md) | `soak_test.py` 移除后的新命令映射 |
+
+### 部署与监控
+
+| 文档 | 说明 |
+|------|------|
+| [部署指南（中文）](deployment-zh.md) | 安装、SSH、网络和服务启动说明 |
+| [部署指南（英文）](deployment.md) | Deployment guide |
+| [部署架构决策（中文）](deployment-architecture-zh.md) | native、hybrid、compose 部署边界 |
+| [Deployment Architecture ADR](deployment-architecture.md) | Deployment mode decision record |
+| [Web 监控操作指南（中文）](web-monitoring-operator-guide-zh.md) | Web 监控平台的部署、指标和运维流程 |
+| [Web Monitoring Operator Guide](web-monitoring-operator-guide.md) | Operator guide |
+| [Prometheus 指标合同（中文）](metrics-contract-zh.md) | GVStress 自定义指标定义 |
+| [Prometheus Metrics Contract](metrics-contract.md) | Metrics contract |
 | [Web 监控验收 TODO](web-monitoring-validation-todos.md) | 受硬件或环境限制的剩余验证项 |
 
 ## 文档结构
 
-```
+```text
 docs/
-├── INDEX.md                      # 文档索引（本文件）
-├── quickstart-zh.md              # 快速入门（中文）
-├── cli-reference-zh.md           # CLI 命令参考（中文）
-├── dual-device-deployment-zh.md  # 双设备部署指南（中文）
-├── testing-zh.md                 # 测试指南（中文）
-├── deployment-zh.md              # 部署指南（中文）
-├── testing.md                    # 测试指南（英文）
-├── deployment.md                 # 部署指南（英文）
+├── INDEX.md                           # 文档索引（本文件）
+├── quickstart-zh.md                   # 快速入门（中文）
+├── cli-reference-zh.md                # CLI 命令参考（中文）
+├── testing.md                         # 测试指南（英文）
+├── testing-zh.md                      # 测试指南（中文）
+├── deployment.md                      # 部署指南（英文）
+├── deployment-zh.md                   # 部署指南（中文）
+├── deployment-architecture.md         # 部署架构决策（英文）
+├── deployment-architecture-zh.md      # 部署架构决策（中文）
+├── web-monitoring-operator-guide.md   # Web 监控操作指南（英文）
+├── web-monitoring-operator-guide-zh.md # Web 监控操作指南（中文）
+├── metrics-contract.md                # Prometheus 指标合同（英文）
+├── metrics-contract-zh.md             # Prometheus 指标合同（中文）
+├── dual-device-deployment-zh.md       # 双设备部署指南（中文）
+├── migration-from-soak-test.md        # 临时 soak 脚本迁移说明
 └── web-monitoring-validation-todos.md # Web 监控验收剩余项
 ```
 
@@ -40,73 +60,53 @@ docs/
 
 ### 新用户
 
-1. [README (中文)](../README-zh.md) - 了解项目是什么
-2. [快速入门指南](quickstart-zh.md) - 运行第一个测试
+1. [README（中文）](../README-zh.md) - 了解 GVStress 当前能力
+2. [快速入门指南](quickstart-zh.md) - 完成第一次本机验证和测试
 3. [CLI 命令参考](cli-reference-zh.md) - 学习所有命令
-4. [双设备部署指南](dual-device-deployment-zh.md) - 部署控制主机+DUT 双设备环境
-5. [测试指南 (中文)](testing-zh.md) - 深入了解测试类型
-6. [部署指南 (中文)](deployment-zh.md) - 配置生产环境
+4. [测试指南（中文）](testing-zh.md) - 深入理解场景和报告
+5. [部署指南（中文）](deployment-zh.md) - 准备真实环境
+6. [Web 监控操作指南（中文）](web-monitoring-operator-guide-zh.md) - 部署监控和报告浏览
 
-### 已有经验用户
+### 架构和运维用户
 
-- [CLI 命令参考](cli-reference-zh.md) - 命令速查
-- [测试指南 (中文)](testing-zh.md) - 故障排除和最佳实践
-- [部署指南 (中文)](deployment-zh.md) - 性能优化和网络配置
+- [部署架构决策（中文）](deployment-architecture-zh.md) - 先确认 native、hybrid、compose 的边界
+- [Prometheus 指标合同（中文）](metrics-contract-zh.md) - 对接监控和告警
+- [Web 监控验收 TODO](web-monitoring-validation-todos.md) - 在 Linux 物理机补齐硬件/Compose/质量门验证
+- [从临时 soak 脚本迁移](migration-from-soak-test.md) - 替换历史临时脚本
 
 ## 主要内容概览
 
 ### 快速入门指南
 
 涵盖：
+
 - 安装 GVStress
+- 验证 `node health` 和 `node capabilities`
 - 准备配置文件
 - 运行第一个冒烟测试
+- 启动本机 Controller 和 Web UI
 - 理解测试结果
-- 常见问题解答
 
 ### CLI 命令参考
 
 涵盖：
-- 所有 CLI 命令和选项
+
+- 传统测试命令：`fakecam`、`dut`、`test`、`report`、`baseline`、`dut-agent`
+- 新服务命令：`node`、`controller`、`web`
 - 参数详细说明
-- 使用示例
 - JSON 输出格式
-- 故障排除
+- 常见调用示例
 
-### 双设备部署指南
-
-涵盖：
-- 控制主机 + 生成器+DUT 三角色架构
-- 网络拓扑和连接方式
-- DUT 代理部署和配置
-- SSH 无密码登录设置
-- 双设备配置文件详解
-- 数据流向和采集机制
-- 完整部署检查清单
-- 常见问题和故障排除
-
-### 测试指南
+### 部署与 Web 监控文档
 
 涵盖：
-- 测试类型（smoke、four_stream、soak、loss_injection）
-- CLI 命令详解
-- 产物解读
-- 结果分析
-- 建议措施
-- 故障排除
-- 完整测试流程示例
 
-### 部署指南
-
-涵盖：
-- 生成器和 DUT 安装
-- SSH 配置
-- 二进制依赖（Aravis、pktgen、ethtool）
-- 网络拓扑配置
-- 性能优化
-- 完整部署检查清单
-
-**注意**: 双设备部署请参阅 [双设备部署指南](dual-device-deployment-zh.md)
+- Full native、hybrid、full compose 的部署取舍
+- native/systemd 节点服务
+- Docker Compose 监控栈
+- Prometheus/Grafana 和 node_exporter 集成
+- Web UI 报告浏览和 `/metrics` 端点
+- 硬件验收、真实 Prometheus/Grafana 联调、ruff/mypy 等剩余验证项
 
 ## 配置文件示例
 
@@ -121,51 +121,15 @@ docs/
 | `examples/scenario_loss.yaml` | 丢包测试场景 |
 | `examples/pktgen_4p.yaml` | pktgen 基线配置 |
 
-## 退出码参考
-
-| 代码 | 含义 |
-|------|------|
-| 0 | 成功/通过 |
-| 1 | 使用/操作错误 |
-| 2 | 警告 (WARN) |
-| 3 | 失败 (FAIL) |
-| 4 | 不适用/无效 (NOT_APPLICABLE) |
-
-## 测试场景类型
-
-| 场景 | 持续时间 | 预热 | 冷却 | 用途 |
-|------|----------|------|------|------|
-| smoke | 60s | 10s | 5s | 快速验证 |
-| four_stream | 300s | 10s | 5s | 多流压力测试 |
-| soak | 1800s | 10s | 5s | 长期稳定性 |
-| loss_injection | 300s | 10s | 5s | 丢包恢复能力 |
-
-## 外部资源
-
-- [GVStress GitHub 仓库](../)
-- [Aravis 项目](https://github.com/AravisProject/aravis)
-- [GigE Vision 标准](https://www.emva.org/standards-technology/gige-vision/)
-
 ## 获取帮助
 
-### 命令帮助
-
 ```bash
-# 主帮助
 python -m gvstress --help
-
-# 子命令帮助
-python -m gvstress fakecam --help
-python -m gvstress test smoke --help
-python -m gvstress dut inspect --help
+python -m gvstress node --help
+python -m gvstress controller serve --help
+python -m gvstress web serve --help
 ```
-
-### 在线支持
-
-- GitHub Issues - 报告问题和功能请求
-- GitHub Discussions - 提问和交流
-- 文档问题 - 在相应文档仓库提交 issue
 
 ---
 
-**最后更新**: 2024 年 1 月
+**最后更新**: 2026 年 5 月
